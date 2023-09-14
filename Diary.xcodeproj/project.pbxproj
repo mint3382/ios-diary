@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		8509BE2BCF0A4A0515A18EC4 /* Pods_Diary.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4C43CC285D0916C54ED9B0B1 /* Pods_Diary.framework */; };
+		920AA8D82AB343750067DDA7 /* OpenWeatherNameSpace.swift in Sources */ = {isa = PBXBuildFile; fileRef = 920AA8D72AB343750067DDA7 /* OpenWeatherNameSpace.swift */; };
 		924390552AB3297500D128CE /* OpenWeatherInfo.plist in Resources */ = {isa = PBXBuildFile; fileRef = 924390542AB3297500D128CE /* OpenWeatherInfo.plist */; };
 		924390572AB329B500D128CE /* Bundle+.swift in Sources */ = {isa = PBXBuildFile; fileRef = 924390562AB329B500D128CE /* Bundle+.swift */; };
 		924390592AB32BD600D128CE /* DataTaskManageable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 924390582AB32BD600D128CE /* DataTaskManageable.swift */; };
@@ -37,6 +38,7 @@
 /* Begin PBXFileReference section */
 		0707809B14194238E9F95F04 /* Pods-Diary.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Diary.release.xcconfig"; path = "Target Support Files/Pods-Diary/Pods-Diary.release.xcconfig"; sourceTree = "<group>"; };
 		4C43CC285D0916C54ED9B0B1 /* Pods_Diary.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Diary.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		920AA8D72AB343750067DDA7 /* OpenWeatherNameSpace.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OpenWeatherNameSpace.swift; sourceTree = "<group>"; };
 		924390542AB3297500D128CE /* OpenWeatherInfo.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = OpenWeatherInfo.plist; sourceTree = "<group>"; };
 		924390562AB329B500D128CE /* Bundle+.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Bundle+.swift"; sourceTree = "<group>"; };
 		924390582AB32BD600D128CE /* DataTaskManageable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataTaskManageable.swift; sourceTree = "<group>"; };
@@ -88,6 +90,14 @@
 			path = Pods;
 			sourceTree = "<group>";
 		};
+		920AA8D62AB3434E0067DDA7 /* NameSpace */ = {
+			isa = PBXGroup;
+			children = (
+				920AA8D72AB343750067DDA7 /* OpenWeatherNameSpace.swift */,
+			);
+			path = NameSpace;
+			sourceTree = "<group>";
+		};
 		926C04912AA6144A0057EBCF /* Entity */ = {
 			isa = PBXGroup;
 			children = (
@@ -132,6 +142,7 @@
 		C739AE23284DF28600741E8F /* Diary */ = {
 			isa = PBXGroup;
 			children = (
+				920AA8D62AB3434E0067DDA7 /* NameSpace */,
 				CB9CBC0D2A9CC37300999DF0 /* App */,
 				CB9CBC0B2A9CC30D00999DF0 /* ViewController */,
 				CBCC01292AB1FEC400A12F57 /* Service */,
@@ -353,6 +364,7 @@
 				926C04D52AAA2CC00057EBCF /* DiaryActivityItemSource.swift in Sources */,
 				926C04992AA614E80057EBCF /* DiaryEntity+CoreDataProperties.swift in Sources */,
 				926A86422A9CC69000DCBBD7 /* DiaryTableViewCell.swift in Sources */,
+				920AA8D82AB343750067DDA7 /* OpenWeatherNameSpace.swift in Sources */,
 				CBCC012E2AB2EDA100A12F57 /* CurrentWeather.swift in Sources */,
 				CBCC012C2AB2ED1C00A12F57 /* Weather.swift in Sources */,
 				CBCC01282AB1E3F600A12F57 /* DiaryService.swift in Sources */,
