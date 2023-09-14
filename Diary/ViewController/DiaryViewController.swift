@@ -192,8 +192,19 @@ extension DiaryViewController: DiaryShareable, DiaryAlertPresentable {
 extension DiaryViewController: CLLocationManagerDelegate {
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         if let location = locations.first {
-            print("위도 : \(location.coordinate.latitude)")
-            print("경도 : \(location.coordinate.longitude)")
+            let lat = "\(location.coordinate.latitude)"
+            let lon = "\(location.coordinate.longitude)"
+            
+            diaryService.fetchCurrentWeather(location: (lat, lon), completion: fetchData)
+        }
+    }
+    
+    func fetchData(_ result: Result<CurrentWeather, NetworkError>) {
+        switch result {
+        case .success(let currentWeather):
+            print(currentWeather.weather.first?.main)
+        case .failure(let error):
+            presentErrorCheckAlert(error: error)
         }
     }
 }

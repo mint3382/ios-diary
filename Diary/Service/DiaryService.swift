@@ -62,3 +62,35 @@ struct DiaryService: CoreDataManageable {
         return (title, body)
     }
 }
+
+extension DiaryService: DataTaskManageable {
+    func fetchCurrentWeather(location: (lat: String, lon: String), completion: @escaping (Result<CurrentWeather, NetworkError>) -> Void) {
+        var component = URLComponents()
+        component.scheme = OpenWeatherNameSpace.scheme
+        component.host = OpenWeatherNameSpace.host
+        component.path = OpenWeatherNameSpace.path
+        
+        let query = ["appid": Bundle.main.openWeatherApiKey, "lat": location.lat, "lon": location.lon]
+        component.queryItems = query.map { URLQueryItem(name: $0.key, value: $0.value) }
+        
+        guard let url = component.url else {
+            return
+        }
+        
+        var request = URLRequest(url: url)
+        request.httpMethod = "GET"
+        
+        performRequest(request: request, objectType: CurrentWeather.self) { result in
+            switch result {
+            case .success(let data):
+                completion(.success(data))
+            case .failure(let error):
+                completion(.failure(error))
+            }
+        }
+    }
+    
+    // TODO: 날씨 icon id를 coreData Container에 저장
+    
+    // TODO: icon id에 따라 image를 불러오기
+}
