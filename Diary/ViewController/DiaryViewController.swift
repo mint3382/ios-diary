@@ -6,7 +6,7 @@
 //
 
 import UIKit
-import LinkPresentation
+import CoreLocation
 
 final class DiaryViewController: UIViewController {
     // MARK: - Property
@@ -18,6 +18,8 @@ final class DiaryViewController: UIViewController {
         
         return textView
     }()
+    
+    let locationManager: CLLocationManager = CLLocationManager()
     
     // MARK: - Initializer
     init (diaryService: DiaryService, diary: DiaryEntity) {
@@ -44,6 +46,7 @@ final class DiaryViewController: UIViewController {
         configureTextView()
         configureTextViewConstraint()
         fillTextView()
+        setupLocation()
         registerKeyboardListener()
     }
     
@@ -102,6 +105,13 @@ final class DiaryViewController: UIViewController {
         if let body = diary.body {
             contentTextView.text.append("\n\(body)")
         }
+    }
+    
+    private func setupLocation() {
+        locationManager.delegate = self
+        locationManager.desiredAccuracy = kCLLocationAccuracyBest
+        locationManager.requestAlwaysAuthorization()
+        locationManager.startUpdatingLocation()
     }
     
     private func writeDiary() {        
@@ -176,5 +186,14 @@ extension DiaryViewController: DiaryShareable, DiaryAlertPresentable {
         sheet.addAction(cancelAction)
         
         present(sheet, animated: true)
+    }
+}
+
+extension DiaryViewController: CLLocationManagerDelegate {
+    func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
+        if let location = locations.first {
+            print("위도 : \(location.coordinate.latitude)")
+            print("경도 : \(location.coordinate.longitude)")
+        }
     }
 }
