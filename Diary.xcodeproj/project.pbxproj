@@ -27,6 +27,8 @@
 		CBC4C42F2A9E1693009D495E /* DateFormatter+.swift in Sources */ = {isa = PBXBuildFile; fileRef = CBC4C42E2A9E1693009D495E /* DateFormatter+.swift */; };
 		CBC4C4342A9F248F009D495E /* DiaryViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CBC4C4332A9F248F009D495E /* DiaryViewController.swift */; };
 		CBCC01282AB1E3F600A12F57 /* DiaryService.swift in Sources */ = {isa = PBXBuildFile; fileRef = CBCC01272AB1E3F600A12F57 /* DiaryService.swift */; };
+		CBCC012C2AB2ED1C00A12F57 /* Weather.swift in Sources */ = {isa = PBXBuildFile; fileRef = CBCC012B2AB2ED1C00A12F57 /* Weather.swift */; };
+		CBCC012E2AB2EDA100A12F57 /* CurrentWeather.swift in Sources */ = {isa = PBXBuildFile; fileRef = CBCC012D2AB2EDA100A12F57 /* CurrentWeather.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -55,6 +57,8 @@
 		CBC4C42E2A9E1693009D495E /* DateFormatter+.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DateFormatter+.swift"; sourceTree = "<group>"; };
 		CBC4C4332A9F248F009D495E /* DiaryViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DiaryViewController.swift; sourceTree = "<group>"; };
 		CBCC01272AB1E3F600A12F57 /* DiaryService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DiaryService.swift; sourceTree = "<group>"; };
+		CBCC012B2AB2ED1C00A12F57 /* Weather.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Weather.swift; sourceTree = "<group>"; };
+		CBCC012D2AB2EDA100A12F57 /* CurrentWeather.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CurrentWeather.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -125,6 +129,7 @@
 				CB9CBC0B2A9CC30D00999DF0 /* ViewController */,
 				CBCC01292AB1FEC400A12F57 /* Service */,
 				CB68EEBD2AB089AB0086994E /* CoreData */,
+				CBCC012A2AB2ECE400A12F57 /* Model */,
 				926C04DA2AAAADF90057EBCF /* Protocol */,
 				CB9CBC0E2A9CC37D00999DF0 /* View */,
 				CBC4C42D2A9E167D009D495E /* Extension */,
@@ -193,6 +198,15 @@
 				CBCC01272AB1E3F600A12F57 /* DiaryService.swift */,
 			);
 			path = Service;
+			sourceTree = "<group>";
+		};
+		CBCC012A2AB2ECE400A12F57 /* Model */ = {
+			isa = PBXGroup;
+			children = (
+				CBCC012B2AB2ED1C00A12F57 /* Weather.swift */,
+				CBCC012D2AB2EDA100A12F57 /* CurrentWeather.swift */,
+			);
+			path = Model;
 			sourceTree = "<group>";
 		};
 		F281E8790D5BBB1D3E4E2411 /* Frameworks */ = {
@@ -329,6 +343,8 @@
 				926C04D52AAA2CC00057EBCF /* DiaryActivityItemSource.swift in Sources */,
 				926C04992AA614E80057EBCF /* DiaryEntity+CoreDataProperties.swift in Sources */,
 				926A86422A9CC69000DCBBD7 /* DiaryTableViewCell.swift in Sources */,
+				CBCC012E2AB2EDA100A12F57 /* CurrentWeather.swift in Sources */,
+				CBCC012C2AB2ED1C00A12F57 /* Weather.swift in Sources */,
 				CBCC01282AB1E3F600A12F57 /* DiaryService.swift in Sources */,
 				CBC4C42F2A9E1693009D495E /* DateFormatter+.swift in Sources */,
 				C739AE25284DF28600741E8F /* AppDelegate.swift in Sources */,
