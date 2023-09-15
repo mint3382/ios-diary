@@ -257,6 +257,160 @@ private func configureCellConstraint() {
 
 <br>
 
+9️⃣ **weak self** <br>
+-
+🔒 **문제점** <br>
+```swift
+private func configureNavigationItem() {
+    let action = UIAction { _ in
+        self.showActionSheet()
+    }
+    let barButtonItem = UIBarButtonItem.init(
+        image: UIImage.init(systemName: "ellipsis.circle"),
+        primaryAction: action
+    )
+    
+    navigationItem.rightBarButtonItem = barButtonItem
+}
+```
+```swift
+private func showActionSheet() {
+    let sheet = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
+    let shareAction = UIAlertAction(title: String(localized: "Share"), style: .default) { _ in
+        self.shareDiary(data: self.diary)
+    }
+    let deleteAction = UIAlertAction(title: String(localized: "Delete"), style: .destructive) { _ in
+        self.presentDeleteConfirmAlert(by: { self.deleteDiary()})
+    }
+    let cancelAction = UIAlertAction(title: String(localized: "Cancel"), style: .cancel)
+    
+    sheet.addAction(shareAction)
+    sheet.addAction(deleteAction)
+    sheet.addAction(cancelAction)
+    
+    present(sheet, animated: true)
+}
+```
+메서드 내 `closure capture`에는 반복적으로 `self`가 호출되고 있습니다. 코드를 계속 타고 들어가면 언젠가는 순환참조인지 아닌지 확인할 수 있겠지만, 코드 파악이 어려워 어느 순간 순환참조임을 놓칠 수 있습니다.
+
+
+🔑 **해결방법** <br>
+해결 방법에 앞서 저희가 순환참조가 일어나는지 알아보기 위해 사용한 방법입니다.
+1. `ViewController`의 `deinit` 호출 확인
+    - `ViewController`가 화면에서 사라졌을 때 `deinit`이 호출되지 않으면 순환참조일 수 있습니다.
+2. `Debug Memory Graph` 메뉴를 이용해 시각적으로 순환참조가 발생하고 있는지 확인
+    - 도형과 화살표로 표기되는 관계 중 순환적으로 보이는 부분이 있다면 순환참조입니다.
+3. `lldb`에서 `CFGetRetainCount`를 이용해 참조 카운트 확인
+    - 메서드가 종료된 후에도 카운트에 변화가 없다면 순환참조일 수 있습니다.
+4. `self`를 캡쳐하고 있는 함수를 반복적으로 호출하여 메모리 사용량 증가 확인
+    - 메모리가 증가하기만 하고 일정수치까지 내려오는 과정이 없다면 순환참조일 수 있습니다.
+
+위 방법들 중 가장 명확한 방법은 4번 이었습니다. 1~3번 방법에는 휴먼에러로 놓칠 수 있는 부분이 있지만, 4번의 경우 메모리 증가가 명확하기 때문입니다. 저희는 분명 순환참조가 발생하고 있었지만 2번으로 순환점을 찾는것에는 실패했습니다.
+
+```swift
+private func configureNavigationItem() {
+    let action = UIAction { [weak self] _ in
+        guard let self else {
+            return
+        }
+        
+        self.showActionSheet()
+    }
+    let barButtonItem = UIBarButtonItem.init(
+        image: UIImage.init(systemName: "ellipsis.circle"),
+        primaryAction: action
+    )
+    
+    navigationItem.rightBarButtonItem = barButtonItem
+}
+```
+```swift
+private func showActionSheet() {
+    let sheet = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
+    let shareAction = UIAlertAction(title: String(localized: "Share"), style: .default) { [weak self] _ in
+        guard let self else {
+            return
+        }
+        
+        self.shareDiary(data: self.diary)
+    }
+    let deleteAction = UIAlertAction(title: String(localized: "Delete"), style: .destructive) { [weak self] _ in
+        guard let self else {
+            return
+        }
+        
+        self.presentDeleteConfirmAlert(by: { self.deleteDiary()})
+    }
+    let cancelAction = UIAlertAction(title: String(localized: "Cancel"), style: .cancel)
+    
+    sheet.addAction(shareAction)
+    sheet.addAction(deleteAction)
+    sheet.addAction(cancelAction)
+    
+    present(sheet, animated: true)
+}
+```
+결론적으로 `self`를 캡쳐하고 있는 모든 부분에 `[weak self]` 를 추가해주는 것으로 반복적인 메소드 호출에도 메모리가 더이상 증가하지 않고 일정수치를 유지하는 것을 확인했습니다.
+순환참조가 발생하지 않는다고 확신한다면 `[weak self]`를 붙이지 않아도 상관없지만, 사용되는 메서드 내부적으로 언제 `self`를 필요로 할지, 또 그것이 순환참조를 발생시킬 지 알 수 없기 때문에 `self`를 사용 할 일이 생긴다면 항상 `[weak self]`를 붙여주는 것으로 결론지었습니다.
+
+<br>
+
+1️⃣0️⃣ **CoreDataManageable** <br>
+-
+🔒 **문제점** <br>
+처음에는 `CoreData`가 `SceneDelegate`에서 직접 `container`가 생성되는 구조였습니다. 그러나 `SceneDelegate`가 그러한 역할을 한다는 점이 어색하여 객체로 분리하기 위한 과정이 필요했습니다. 이때 두 가지 주의점이 있었습니다.
+>1. `CoreData Manager`는 `CoreData`를 사용한다면 필요한 관리 객체는 전부 사용할 수 있게 해야 한다.
+>2. `Diary`는 `CoreDataManager`를 사용해 `Diary`를 생성, 저장, 삭제하는 `Diary` 전용 `Manager`가 필요하다.
+
+🔑 **해결방법** <br>
+때문에 저희는 `CoreDataManageable Protocol`과 `DiaryService` 객체를 만들었습니다. `DiaryService`는 `CoreDataManageable`을 채택하고 있어 `CoreDataManage`와 같은 역할을 수행하면서도 `Diary` 전용 `Manager`의 역할을 수행할 수 있습니다. 또한 처음 `SceneDelegate`에서 이 `DiaryService`를 한번 만든 후 그대로 `ViewController`들은 주입 받아서 사용하기 때문에 의존성 방향을 일관적으로 주입할 수 있었습니다. 추가로 수정사항이 필요한 경우도 `DiaryService`만 수정하면 되기에 개방 폐쇄의 원칙을 지킬 수 있었습니다.
+
+
+<br>
+
+1️⃣1️⃣ **API Key 은닉화** <br>
+-
+🔒 **문제점** <br>
+`API KEY`는 외부에 노출이 되어서는 안되는 키입니다. 때문에 이를 은닉화 하기 위해 `info.plist` 파일을 새로 생성하는 방법을 선택하였습니다. 그런데 이를 가져와서 사용할 때 필요한 `NSDictionary`의 기존 초기화 방법이 `deprecated`되어 더는 사용할 수 없게 된 문제가 있었습니다. 
+
+[deprecated된 초기화](https://developer.apple.com/documentation/foundation/nsdictionary/1414949-init)
+
+
+🔑 **해결방법** <br>
+새롭게 제공되어 있는 초기화 방법을 이용해 해결하였습니다.
+
+[새롭게 제공된 초기화](https://developer.apple.com/documentation/foundation/nsdictionary/2879140-init)
+
+<br>
+
+1️⃣2️⃣ **where Self: Type** <br>
+-
+🔒 **문제점** <br>
+protocol을 사용할 때 특정한 Type에서만 채택할 수 있게 해주고 싶었습니다. 그래야 extension에서 함수를 구현할 때도 가능한 동작이 있었고 때문에 매개변수로 항상 타입을 받아와야 했습니다.
+
+```swift
+protocol DiaryAlertPresentable { }
+
+extension DiaryAlertPresentable {
+    func showDeleteConfirmAlert(in viewController: UIViewController, by action: @escaping () -> Void) {
+    }
+}
+```
+
+🔑 **해결방법** <br>
+where Self: Type으로 채택할 수 있는 Type을 제한해 줌으로서 해결하였습니다.
+
+```swift
+protocol DiaryAlertPresentable where Self: UIViewController { }
+
+extension DiaryAlertPresentable {
+func presentDeleteConfirmAlert(by action: @escaping () -> Void) {
+    }
+}
+```
+
+<br>
+
 <a id="참고-링크"></a>
 
 ## 📚 참고 링크
@@ -268,7 +422,9 @@ private func configureCellConstraint() {
 - [🍎Apple Docs: Link Presentation](https://developer.apple.com/documentation/linkpresentation)
 - [🍎Apple Docs: sceneDidEnterBackground(_:)](https://developer.apple.com/documentation/uikit/uiscenedelegate/3197917-scenedidenterbackground)
 - [🍎Apple Docs: UIActivityItemSource](https://developer.apple.com/documentation/uikit/uiactivityitemsource)
-- [🍎Apple Docs: ]()
+- [🍎Apple Docs: init(contentsOf:error:)](https://developer.apple.com/documentation/foundation/nsdictionary/2879140-init)
+- [🍎Apple Docs: Core Location](https://developer.apple.com/documentation/corelocation)
+- [🍎Apple Docs: CFGetRetainCount(_:)](https://developer.apple.com/documentation/corefoundation/1521288-cfgetretaincount)
 - <Img src = "https://github.com/mint3382/ios-calculator-app/assets/124643545/56986ab4-dc23-4e29-bdda-f00ec1db809b" width="20"/> [야곰닷넷: Swift Lint 써보기](https://yagom.net/forums/topic/swift-lint-%EC%8D%A8%EB%B3%B4%EA%B8%B0/)
 - <Img src = "https://github.com/mint3382/ios-calculator-app/assets/124643545/56986ab4-dc23-4e29-bdda-f00ec1db809b" width="20"/> [야곰닷넷: LinkPresentation](https://yagom.net/forums/topic/linkpresentation/)
 - <Img src = "https://hackmd.io/_uploads/ByTEsGUv3.png" width="20"/> [blog: [iOS] Swiftlint 룰 적용하기](https://velog.io/@whitehyun/iOS-Swiftlint-%EB%A3%B0-%EC%A0%81%EC%9A%A9%ED%95%98%EA%B8%B0)
