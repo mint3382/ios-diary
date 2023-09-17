@@ -40,8 +40,15 @@ final class DiaryTableViewCell: UITableViewCell {
         label.setContentHuggingPriority(.defaultHigh, for: .horizontal)
         label.setContentCompressionResistancePriority(.required, for: .horizontal)
         label.font = UIFont.preferredFont(forTextStyle: .body)
+        label.setContentHuggingPriority(.required, for: .vertical)
         
         return label
+    }()
+    private let icon: UIImageView = {
+        let image = UIImageView()
+        image.setContentHuggingPriority(.defaultHigh, for: .horizontal)
+        
+        return image
     }()
     private let preview: UILabel = {
         let label = UILabel()
@@ -73,6 +80,7 @@ final class DiaryTableViewCell: UITableViewCell {
     private func configureCellSubviews() {
         contentView.addSubview(contentStackView)
         descriptionStackView.addArrangedSubview(date)
+        descriptionStackView.addArrangedSubview(icon)
         descriptionStackView.addArrangedSubview(preview)
         contentStackView.addArrangedSubview(title)
         contentStackView.addArrangedSubview(descriptionStackView)
@@ -84,6 +92,10 @@ final class DiaryTableViewCell: UITableViewCell {
             contentStackView.topAnchor.constraint(equalTo: contentView.layoutMarginsGuide.topAnchor),
             contentStackView.trailingAnchor.constraint(equalTo: contentView.layoutMarginsGuide.trailingAnchor),
             contentStackView.bottomAnchor.constraint(equalTo: contentView.layoutMarginsGuide.bottomAnchor)
+        ])
+        
+        NSLayoutConstraint.activate([
+            icon.widthAnchor.constraint(equalTo: icon.heightAnchor)
         ])
     }
 }
