@@ -5,7 +5,7 @@
 //  Created by MINT, BMO on 2023/09/13.
 //
 
-import Foundation
+import UIKit
 import CoreData
 
 struct DiaryService: CoreDataManageable {
@@ -64,7 +64,10 @@ struct DiaryService: CoreDataManageable {
 }
 
 extension DiaryService: DataTaskManageable {
-    func fetchCurrentWeather(location: (lat: String, lon: String), completion: @escaping (Result<CurrentWeather, NetworkError>) -> Void) {
+    func fetchCurrentWeather(
+        location: (lat: String, lon: String),
+        completion: @escaping (Result<CurrentWeather, NetworkError>) -> Void
+    ) {
         var component = URLComponents()
         component.scheme = OpenWeatherNameSpace.scheme
         component.host = OpenWeatherNameSpace.host
@@ -90,7 +93,10 @@ extension DiaryService: DataTaskManageable {
         }
     }
     
-    // TODO: 날씨 icon id를 coreData Container에 저장
-    
-    // TODO: icon id에 따라 image를 불러오기
+    func fetchWeatherIcon(iconId: String) -> UIImage {
+        let url = URL(string: "https://openweathermap.org/img/wn/\(iconId)@2x.png")
+        let data = try? Data(contentsOf: url!)
+        
+        return UIImage(data: data!)!
+    }
 }

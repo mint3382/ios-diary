@@ -13,7 +13,7 @@ extension DiaryEntity {
     @NSManaged var body: String?
     @NSManaged var date: Date
     @NSManaged var title: String
-    @NSManaged var weatherId: String?
+    @NSManaged var weatherMain: String?
     @NSManaged var weatherIconId: String?
 }
 

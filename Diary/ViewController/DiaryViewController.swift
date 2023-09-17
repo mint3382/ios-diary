@@ -202,7 +202,12 @@ extension DiaryViewController: CLLocationManagerDelegate {
     func fetchData(_ result: Result<CurrentWeather, NetworkError>) {
         switch result {
         case .success(let currentWeather):
-            print(currentWeather.weather.first?.main)
+            guard let weather = currentWeather.weather.first else {
+                return
+            }
+            
+            diary.weatherMain = weather.main
+            diary.weatherIconId = weather.icon
         case .failure(let error):
             presentErrorCheckAlert(error: error)
         }

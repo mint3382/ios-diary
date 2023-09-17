@@ -118,6 +118,11 @@ extension DiaryListViewController: UITableViewDataSource {
         let diary = diaryList[indexPath.row]
         
         cell.configureContents(diary: diary)
+        
+        if let iconId = diary.weatherIconId {
+            cell.configure(icon: diaryService.fetchWeatherIcon(iconId: iconId))
+        }
+
         cell.accessoryType = .disclosureIndicator
         
         return cell

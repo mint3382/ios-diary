@@ -98,4 +98,8 @@ final class DiaryTableViewCell: UITableViewCell {
             icon.widthAnchor.constraint(equalTo: icon.heightAnchor)
         ])
     }
+    
+    func configure(icon: UIImage) {
+        self.icon.image = icon
+    }
 }
