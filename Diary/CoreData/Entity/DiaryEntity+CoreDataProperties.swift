@@ -10,14 +10,15 @@ import Foundation
 import CoreData
 
 extension DiaryEntity {
-    @NSManaged var id: UUID
     @NSManaged var body: String?
     @NSManaged var date: Date
     @NSManaged var title: String
+    @NSManaged var weatherId: String?
+    @NSManaged var weatherIconId: String?
 }
 
 extension DiaryEntity: Identifiable {
-
+    @NSManaged var id: UUID
 }
 
 extension DiaryEntity: EntityProtocol {
